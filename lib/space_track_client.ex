@@ -9,7 +9,7 @@ defmodule SpaceTrackClient do
       "query" => "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/25544,36411,26871,27422/predicates/FILE,EPOCH,TLE_LINE1,TLE_LINE2/format/json"
     })
 
-    IO.puts("Body: #{body}")
+    # IO.puts("Body: #{body}")
 
     case HTTPoison.post(url, body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body}} ->
@@ -22,18 +22,18 @@ defmodule SpaceTrackClient do
   end
 
   def extract_cookies(headers) do
-    IO.puts("HEADERS: #{inspect(headers)}")
+    # IO.puts("HEADERS: #{inspect(headers)}")
     headers
     |> Enum.filter(fn {key, _value} -> String.downcase(key) == "set-cookie" end)
     |> Enum.map(fn {_key, value} -> value end)
   end
 
-  def login do
+  def login(identity,password) do
     url = "https://www.space-track.org/ajaxauth/login"
     headers = ["Content-Type": "application/x-www-form-urlencoded","Accept": "application/json; Charset=utf-8"]
     body = URI.encode_query(%{
-      "identity" => "james.grantham@gmail.com",
-      "password" => "xuTbaz-7nyxwe-dorfet",
+      "identity" => identity,
+      "password" => password,
     })
 
     IO.puts("Body: #{body}")
@@ -50,7 +50,7 @@ defmodule SpaceTrackClient do
   end
 
   def get_sat_data do
-    sat_data_url = "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/25544,36411,26871,27422/predicates/FILE,EPOCH,TLE_LINE1,TLE_LINE2/format/json"
+    sat_data_url = "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/41838,37951/predicates/FILE,EPOCH,TLE_LINE0,TLE_LINE1,TLE_LINE2/format/json"
     cookies = CookieStorage.get_cookies()
     IO.puts("Cookies: #{inspect(cookies)}")
 

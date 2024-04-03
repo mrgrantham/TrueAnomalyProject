@@ -10,7 +10,8 @@ defmodule TrueAnomalyProject do
     IO.puts(hello())
     children = [
       # List of workers and supervisors to be started
-      {CookieStorage, []} # This tells the supervisor to start CookieStore
+      {CookieStorage, []}, # This tells the supervisor to start CookieStore
+      {SatelliteRecordStorage, []} # This tells the supervisor to start the Satellite Data Storage
     ]
     opts = [strategy: :one_for_one, name: TrueAnomalyProject.Supervisor]
     # Need to call this function to return a supervision tree from the start() function,

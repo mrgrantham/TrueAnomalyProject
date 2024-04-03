@@ -17,20 +17,7 @@ defmodule TrueAnomalyProjectTest do
   end
 
   test "try login then pull with cookie" do
-
   end
-end
-
-defmodule SpaceTrackClientTest do
-  use ExUnit.Case
-
-  test "login and get sat data" do
-    SpaceTrackClient.login()
-
-    {:ok, sat_data_string} = SpaceTrackClient.get_sat_data()
-    IO.puts("Sat Data: #{inspect(sat_data_string)}")
-  end
-
 end
 
 defmodule CookieStorageTest do
