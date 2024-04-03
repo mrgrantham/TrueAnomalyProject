@@ -15,7 +15,8 @@ defmodule TrueAnomalyProject.MixProject do
   def application do
     [
       # Name of any function implenting the Application behavior
-      mod: {TrueAnomalyProject,[]}, # entrypoint for application. Module must decalare a start() function
+      # entrypoint for application. Module must decalare a start() function
+      mod: {TrueAnomalyProject, []},
       extra_applications: [:logger]
     ]
   end
@@ -23,8 +24,10 @@ defmodule TrueAnomalyProject.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 2.2"}, # handle rest api requests
-      {:poison, "~> 5.0"} # handle json
+      # handle rest api requests
+      {:httpoison, "~> 2.2"},
+      # handle json
+      {:poison, "~> 5.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

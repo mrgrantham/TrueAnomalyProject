@@ -8,19 +8,20 @@ defmodule TrueAnomalyProject do
   """
   def start(_type, _args) do
     IO.puts(hello())
+
     children = [
       # List of workers and supervisors to be started
-      {CookieStorage, []}, # This tells the supervisor to start CookieStore
-      {SatelliteRecordStorage, []} # This tells the supervisor to start the Satellite Data Storage
+      # This tells the supervisor to start CookieStore
+      {CookieStorage, []},
+      # This tells the supervisor to start the Satellite Data Storage
+      {SatelliteRecordStorage, []}
     ]
+
     opts = [strategy: :one_for_one, name: TrueAnomalyProject.Supervisor]
     # Need to call this function to return a supervision tree from the start() function,
     # fullfulling the spec requirments of this function when used by the application
-    Supervisor.start_link(children,opts)
+    Supervisor.start_link(children, opts)
   end
-
-
-
 
   @doc """
   Hello world.
@@ -44,7 +45,6 @@ defmodule TrueAnomalyProject do
 
   """
   def poisen do
-    HTTPoison.get! "https://postman-echo.com/get"
+    HTTPoison.get!("https://postman-echo.com/get")
   end
-
 end

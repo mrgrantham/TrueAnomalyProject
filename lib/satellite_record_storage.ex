@@ -24,5 +24,4 @@ defmodule SatelliteRecordStorage do
   def handle_call(:get_records, _from, state) do
     {:reply, state, state}
   end
-
 end

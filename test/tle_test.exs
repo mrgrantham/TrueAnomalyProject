@@ -53,6 +53,31 @@ defmodule TLETest do
 
     tle = TLE.tle_from_map(tle_map)
     # IO.puts("TLE STRUCT: #{inspect(tle)}")
-    assert %TLE{line0: "0 LUCH 5A", line1: %TLE.Line1{satellite_catalog_no: "37951", elset_classification: "U", international_designator: "11074B  ", element_set_epoch: "24093.81754303", derivative_1st: "-.00000047", derivative_2nd: " 00000-0", b_drag_term: " 00000+0", element_set_type: "0", element_no: " 999", checksum: "8"}, line2: %TLE.Line2{satellite_catalog_no: "37951", orbit_inclination: "  6.6890", right_ascension: " 86.1657", eccentricity: "0003145", argument_of_pedigree: "302.9588", mean_anomaly: "263.7072", mean_motion: " 1.00271842", revolution_no_at_epoch: " 4511", checksum: "0"}} == tle
+    assert %TLE{
+             line0: "0 LUCH 5A",
+             line1: %TLE.Line1{
+               satellite_catalog_no: "37951",
+               elset_classification: "U",
+               international_designator: "11074B  ",
+               element_set_epoch: "24093.81754303",
+               derivative_1st: "-.00000047",
+               derivative_2nd: " 00000-0",
+               b_drag_term: " 00000+0",
+               element_set_type: "0",
+               element_no: " 999",
+               checksum: "8"
+             },
+             line2: %TLE.Line2{
+               satellite_catalog_no: "37951",
+               orbit_inclination: "  6.6890",
+               right_ascension: " 86.1657",
+               eccentricity: "0003145",
+               argument_of_pedigree: "302.9588",
+               mean_anomaly: "263.7072",
+               mean_motion: " 1.00271842",
+               revolution_no_at_epoch: " 4511",
+               checksum: "0"
+             }
+           } == tle
   end
 end
