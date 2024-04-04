@@ -38,9 +38,7 @@ defmodule SpaceTrackClient do
     |> Enum.map(fn {_key, value} -> value end)
   end
 
-  def login(identity, password) do
-    url = "https://www.space-track.org/ajaxauth/login"
-
+  def login(url, identity, password, retries) do
     headers = [
       "Content-Type": "application/x-www-form-urlencoded",
       Accept: "application/json; Charset=utf-8"
@@ -56,22 +54,54 @@ defmodule SpaceTrackClient do
 
     case HTTPoison.post(url, body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body, headers: response_headers}} ->
-        response_headers |> extract_cookies() |> CookieStorage.set_cookies()
+        cookies = extract_cookies(response_headers)
+        SessionStorage.set_session_info(identity, password, cookies)
         {:ok, response_body}
 
       {:ok, %HTTPoison.Response{status_code: code}} ->
-        {:error, "Failed with status code #{code}"}
+        case retries do
+          _ when retries >= 1 ->
+            IO.puts("Retries left: #{retries}")
+            login(identity, password, retries - 1)
+
+          _ ->
+            {:error, "Failed with status code #{code}"}
+        end
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, reason}
+        case retries do
+          _ when retries >= 1 ->
+            IO.puts("Retries left: #{retries}")
+            login(identity, password, retries - 1)
+
+          _ ->
+            {:error, reason}
+        end
     end
   end
 
-  def get_sat_data do
+  def login(identity, password, retries \\ 0) do
+    url = "https://www.space-track.org/ajaxauth/login"
+    login(url, identity, password, retries)
+  end
+
+  def refresh() do
+    {:ok, {identity, password}} = SessionStorage.get_credentials()
+    login(identity, password, 3)
+  end
+
+  def pull_satellite_data do
     sat_data_url =
       "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/41838,37951/predicates/FILE,EPOCH,TLE_LINE0,TLE_LINE1,TLE_LINE2/format/json"
 
-    cookies = CookieStorage.get_cookies()
+    # sat_data_url =
+    #   "https://www.space-track.org/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/41838,37951/format/json"
+
+    if SessionStorage.expired() do
+      refresh()
+    end
+
+    {:ok, cookies} = SessionStorage.get_cookies()
     IO.puts("Cookies: #{inspect(cookies)}")
 
     # Format cookies for the HTTP header

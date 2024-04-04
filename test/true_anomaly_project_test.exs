@@ -20,19 +20,19 @@ defmodule TrueAnomalyProjectTest do
   end
 end
 
-defmodule CookieStorageTest do
+defmodule SessionStorageTest do
   use ExUnit.Case
 
   # setup do
-  #   case GenServer.whereis(CookieStorage) do
+  #   case GenServer.whereis(SessionStorage) do
   #     nil ->
-  #       IO.puts("GenServer #{inspect(CookieStorage)} is not running")
+  #       IO.puts("GenServer #{inspect(SessionStorage)} is not running")
   #     pid ->
-  #       IO.puts("GenServer #{inspect(CookieStorage)} with pid #{inspect(pid)} is STOPPED")
+  #       IO.puts("GenServer #{inspect(SessionStorage)} with pid #{inspect(pid)} is STOPPED")
   #       GenServer.stop(pid)
   #   end
 
-  #   {:ok, pid} = CookieStorage.start_link()
+  #   {:ok, pid} = SessionStorage.start_link()
   #   IO.puts("Cookie Storage started for pid [#{inspect(pid)}]")
 
   #   IO.puts("This is a setup callback for #{inspect(self())}")
@@ -42,10 +42,10 @@ defmodule CookieStorageTest do
   #   end)
   # end
 
-  # mix test command already handles starting the CookieStorage GenServer
+  # mix test command already handles starting the SessionStorage GenServer
   test "cookie server" do
-    CookieStorage.set_cookies({"cookie info"})
-    cookies = CookieStorage.get_cookies()
+    SessionStorage.set_session_info("me@place.com", "12345", {"cookie info"})
+    {:ok, cookies} = SessionStorage.get_cookies()
     IO.puts("COOKIE: #{inspect(cookies)}")
     assert {"cookie info"} == cookies
   end

@@ -26,6 +26,7 @@ defmodule TrueAnomalyProject.MixProject do
     [
       # handle rest api requests
       {:httpoison, "~> 2.2"},
+      {:timex, "~> 3.7"},
       # handle json
       {:poison, "~> 5.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},

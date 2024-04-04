@@ -7,7 +7,7 @@ defmodule SpaceTrackClientTest do
   test "login and get sat data" do
     SpaceTrackClient.login(@identity, @password)
 
-    {:ok, sat_data_string} = SpaceTrackClient.get_sat_data()
+    {:ok, sat_data_string} = SpaceTrackClient.pull_satellite_data()
     IO.puts("Sat Data: #{inspect(sat_data_string)}")
   end
 end
