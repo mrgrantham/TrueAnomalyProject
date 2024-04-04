@@ -1,5 +1,14 @@
 defmodule SpaceTrackClient do
+  @moduledoc """
+  The SpaceTrackClient module contains all the functions for facilitating
+  login and retrieval of data from SpaceTrack REST API
+  """
   alias HTTPoison
+
+  def init(identity, password, retries) do
+    SessionStorage.init(identity, password)
+    login(identity, password, retries)
+  end
 
   def login_and_pull do
     url = "https://www.space-track.org/ajaxauth/login"
@@ -17,8 +26,6 @@ defmodule SpaceTrackClient do
           "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/25544,36411,26871,27422/predicates/FILE,EPOCH,TLE_LINE1,TLE_LINE2/format/json"
       })
 
-    # IO.puts("Body: #{body}")
-
     case HTTPoison.post(url, body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body}} ->
         {:ok, response_body}
@@ -32,7 +39,6 @@ defmodule SpaceTrackClient do
   end
 
   def extract_cookies(headers) do
-    # IO.puts("HEADERS: #{inspect(headers)}")
     headers
     |> Enum.filter(fn {key, _value} -> String.downcase(key) == "set-cookie" end)
     |> Enum.map(fn {_key, value} -> value end)
@@ -50,8 +56,6 @@ defmodule SpaceTrackClient do
         "password" => password
       })
 
-    IO.puts("Body: #{body}")
-
     case HTTPoison.post(url, body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body, headers: response_headers}} ->
         cookies = extract_cookies(response_headers)
@@ -61,7 +65,7 @@ defmodule SpaceTrackClient do
       {:ok, %HTTPoison.Response{status_code: code}} ->
         case retries do
           _ when retries >= 1 ->
-            IO.puts("Retries left: #{retries}")
+            IO.puts("Login failed trying again. Retries left: #{retries}")
             login(identity, password, retries - 1)
 
           _ ->
@@ -71,7 +75,7 @@ defmodule SpaceTrackClient do
       {:error, %HTTPoison.Error{reason: reason}} ->
         case retries do
           _ when retries >= 1 ->
-            IO.puts("Retries left: #{retries}")
+            IO.puts("Login failed trying again. Retries left: #{retries}")
             login(identity, password, retries - 1)
 
           _ ->
@@ -92,10 +96,8 @@ defmodule SpaceTrackClient do
 
   def pull_satellite_data(satellites) do
     satellite_list_string = Enum.join(satellites, ",")
-    # sat_data_url =
-    #   "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/41838,37951/predicates/FILE,EPOCH,TLE_LINE0,TLE_LINE1,TLE_LINE2/format/json"
 
-    sat_data_url =
+    satellite_data_url =
       "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/#{satellite_list_string}/format/json"
 
     if SessionStorage.expired() do
@@ -103,16 +105,14 @@ defmodule SpaceTrackClient do
     end
 
     {:ok, cookies} = SessionStorage.get_cookies()
-    IO.puts("Cookies: #{inspect(cookies)}")
 
     # Format cookies for the HTTP header
     cookies_joined = Enum.join(cookies, "; ")
 
     cookie_header = [{"Cookie", cookies_joined}]
-    IO.puts("Cookie header: #{inspect(cookie_header)}")
-    # Make the request with the cookies included
 
-    case HTTPoison.get(sat_data_url, cookie_header) do
+    # Make the request with the cookies included
+    case HTTPoison.get(satellite_data_url, cookie_header) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body, headers: response_headers}} ->
         # retrieve the content type an ensure that we got json back from the server
         content_type =
@@ -121,8 +121,6 @@ defmodule SpaceTrackClient do
           |> Enum.map(fn {_key, value} -> value end)
           |> List.first()
           |> String.downcase()
-
-        IO.puts("Content type: #{content_type}")
 
         case content_type do
           "application/json" ->

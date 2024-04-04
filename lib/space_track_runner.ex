@@ -1,4 +1,8 @@
 defmodule SpaceTrackRunner do
+  @moduledoc """
+  The SpaceTrackRunner module encapsulates the functions that manage the
+  initialization and retrival and storing of satellite data.
+  """
   use GenServer
 
   def start_link(opts) do
@@ -7,7 +11,6 @@ defmodule SpaceTrackRunner do
 
   def init({pull_interval, identity, password, satellites}) do
     # store credentials for use later on refresh of cookies
-    SessionStorage.init(identity, password)
     SatelliteRecordStorage.init(satellites)
 
     IO.puts(
@@ -15,14 +18,13 @@ defmodule SpaceTrackRunner do
     )
 
     retries = 3
-    SpaceTrackClient.login(identity, password, retries)
+    SpaceTrackClient.init(identity, password, retries)
     send(SpaceTrackRunner, :pull)
     # passes this value as state to the gen server to be reused in subsequent calls
     {:ok, pull_interval}
   end
 
   defp schedule_next_pull(pull_interval) do
-    IO.puts("scheduling next pull")
     :timer.send_after(pull_interval, :pull)
   end
 

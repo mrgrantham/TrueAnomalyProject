@@ -9,7 +9,6 @@ defmodule SessionStorageTest do
     end)
   end
 
-  # mix test command already handles starting the SessionStorage GenServer
   test "cookie setting and retrieval" do
     SessionStorage.init("me@place.com", "12345")
     SessionStorage.set_session_info(["cookie info; expires=other; other"])

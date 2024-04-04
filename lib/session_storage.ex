@@ -1,9 +1,13 @@
 defmodule SessionStorage do
+  @moduledoc """
+  The SessionStorage manages the storage and retrieval on information
+  required to maintain and restore a user's session with SpaceTrack.
+  Key peices of data managed here are the identity and passworkd for login,
+  the current cookie as well as its expiration time.
+  """
   @table_name __MODULE__
 
   def init(identity, password) do
-    IO.puts("Creating table #{inspect(__MODULE__)}")
-
     ets_options = [
       :set,
       :public,
@@ -27,11 +31,9 @@ defmodule SessionStorage do
       end)
 
     [_expiration_label, expiration_string | _rest] = String.split(expiration_section, "=")
-    IO.puts("Expiration: #{expiration_string}")
 
     case Timex.parse(expiration_string, "{WDshort}, {0D}-{Mshort}-{YYYY} {h24}:{m}:{s} {Zname}") do
       {:ok, expiration} ->
-        IO.puts("Expiration timex: #{expiration}")
         expiration
 
       {:error, reason} ->
@@ -40,7 +42,6 @@ defmodule SessionStorage do
   end
 
   def set_session_info(cookies) do
-    IO.puts("Getting cookies #{inspect(__MODULE__)}")
     expiration = extract_expiration(cookies)
     :ets.insert(@table_name, {:cookies, cookies})
     :ets.insert(@table_name, {:expiration, expiration})

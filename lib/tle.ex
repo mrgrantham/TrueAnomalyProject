@@ -1,8 +1,14 @@
 defmodule TLE.Line0 do
+  @moduledoc """
+  TLE.Line0 contains the components to be populated by the Two Line Element format line 0
+  """
   defstruct common_name: nil
 end
 
 defmodule TLE.Line1 do
+  @moduledoc """
+  TLE.Line1 contains the components to be populated by the Two Line Element format line 1
+  """
   defstruct satellite_catalog_no: nil,
             elset_classification: nil,
             international_designator: nil,
@@ -33,6 +39,9 @@ defmodule TLE.Line1 do
 end
 
 defmodule TLE.Line2 do
+  @moduledoc """
+  TLE.Line2 contains the components to be populated by the Two Line Element format line 1
+  """
   defstruct satellite_catalog_no: nil,
             orbit_inclination: nil,
             right_ascension: nil,
@@ -61,6 +70,11 @@ defmodule TLE.Line2 do
 end
 
 defmodule TLE do
+  @moduledoc """
+  TLE contains functions to combine the Two Line Element components into a single struct
+  that parses the lines as defined in the spec
+  https://www.space-track.org/documentation#/tle
+  """
   defstruct epoch: nil, line0: %TLE.Line0{}, line1: %TLE.Line1{}, line2: %TLE.Line2{}
 
   def tle_from_map(tle_map) do

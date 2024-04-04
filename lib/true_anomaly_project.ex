@@ -1,6 +1,11 @@
 defmodule TrueAnomalyProject do
   @moduledoc """
-  Documentation for `TrueAnomalyProject`.
+
+  The TrueAnomalyProject module is the sample app that runs the SpaceTrackRunner
+  which handles all the pulling and storing of the satellite data. Here is wehere
+  the login credentials, preferred pull interval, and satellites of interest are
+  passed to the SpaceTrackRunner via the Supervisor
+
   """
 
   # credentials to use for pulling Space-Track data
@@ -13,6 +18,9 @@ defmodule TrueAnomalyProject do
 
   @doc """
   Start Application
+
+  ## Example
+  iex>SatelliteRecordStorage.get_record(41838)
   """
   def start(_type, _args) do
     children = [

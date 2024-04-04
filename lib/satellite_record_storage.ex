@@ -1,8 +1,11 @@
 defmodule SatelliteRecordStorage do
+  @moduledoc """
+  The SatelliteRecordStorage contains the functions used to manage the ETS table
+  uses to store IDs of the satellites of interest for the Space Track queries,
+  as well as the
+  """
   @table_name __MODULE__
   def init(satellites) do
-    IO.puts("Creating table #{inspect(__MODULE__)}")
-
     ets_options = [
       :set,
       :public,
@@ -32,5 +35,17 @@ defmodule SatelliteRecordStorage do
       [] -> {:error, :not_found}
       [{_satellite, satellite_data}] -> {:ok, satellite_data}
     end
+  end
+
+  def get_records(satellites) do
+    satellites_data =
+      Enum.map(satellites, fn satellite ->
+        case :ets.lookup(@table_name, satellite) do
+          [] -> {satellite, :not_found}
+          [{satellite, satellite_data}] -> {satellite, satellite_data}
+        end
+      end)
+
+    Enum.into(satellites_data, %{})
   end
 end
