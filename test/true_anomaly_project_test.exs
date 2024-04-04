@@ -44,7 +44,8 @@ defmodule SessionStorageTest do
 
   # mix test command already handles starting the SessionStorage GenServer
   test "cookie server" do
-    SessionStorage.set_session_info("me@place.com", "12345", {"cookie info"})
+    SessionStorage.init("me@place.com", "12345")
+    SessionStorage.set_session_info({"cookie info"})
     {:ok, cookies} = SessionStorage.get_cookies()
     IO.puts("COOKIE: #{inspect(cookies)}")
     assert {"cookie info"} == cookies

@@ -5,7 +5,10 @@ defmodule TrueAnomalyProject do
 
   @identity "james.grantham@gmail.com"
   @password "xuTbaz-7nyxwe-dorfet"
-  @pull_interval 10000 # 10 second interval to pull new satellite data
+  # 10 second interval to pull new satellite data
+  @pull_interval 10000
+
+  @satellites [41838, 37951]
 
   @doc """
   Start Application
@@ -17,7 +20,7 @@ defmodule TrueAnomalyProject do
       # List of workers and supervisors to be started
       # This tells the supervisor to start the Satellite Data Storage
       {SatelliteRecordStorage, []},
-      {SpaceTrackRunner, {@pull_interval, @identity, @password}}
+      {SpaceTrackRunner, {@pull_interval, @identity, @password, @satellites}}
     ]
 
     opts = [strategy: :one_for_one, name: TrueAnomalyProject.Supervisor]

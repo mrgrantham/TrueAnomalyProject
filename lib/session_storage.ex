@@ -1,9 +1,7 @@
 defmodule SessionStorage do
-  # use GenServer
-
   @table_name __MODULE__
 
-  def init(_ \\ []) do
+  def init(identity, password) do
     IO.puts("Creating table #{inspect(__MODULE__)}")
 
     ets_options = [
@@ -15,6 +13,7 @@ defmodule SessionStorage do
     ]
 
     :ets.new(@table_name, ets_options)
+    :ets.insert(@table_name, {:credentials, {identity, password}})
     {:ok, %{}}
   end
 
@@ -40,12 +39,15 @@ defmodule SessionStorage do
     end
   end
 
-  def set_session_info(identity, password, cookies) do
+  def set_session_info(cookies) do
     IO.puts("Getting cookies #{inspect(__MODULE__)}")
     expiration = extract_expiration(cookies)
     :ets.insert(@table_name, {:cookies, cookies})
     :ets.insert(@table_name, {:expiration, expiration})
-    :ets.insert(@table_name, {:credentials, {identity, password}})
+  end
+
+  def set_satellite_query_info(satellites) do
+    :ets.insert(@table_name, {:satellites, satellites})
   end
 
   def get_cookies() do
@@ -69,21 +71,26 @@ defmodule SessionStorage do
     end
   end
 
+  def get_satellite_query_info() do
+    case :ets.lookup(@table_name, :satellites) do
+      [] -> {:error, :not_found}
+      [{:satellites, satellites}] -> {:ok, satellites}
+    end
+  end
+
   def expired() do
     {:ok, expiration} = get_expiration()
-    current_time = DateTime.utc_now()
+    current_time = Timex.now()
+    duration = Timex.diff(expiration, current_time, :duration)
+    formatted_duration = Timex.Format.Duration.Formatter.format(duration, :humanized)
 
     case DateTime.compare(expiration, current_time) do
       :gt ->
-        IO.puts("Expiration greater than current time")
+        IO.puts("Cookie not expired. Time left: #{formatted_duration}")
         false
 
-      :lt ->
-        IO.puts("Expiration less than current time")
-        true
-
-      :eq ->
-        IO.puts("Expiration equal current time... unlikely")
+      _ ->
+        IO.puts("Cookies expired")
         true
     end
   end

@@ -55,7 +55,7 @@ defmodule SpaceTrackClient do
     case HTTPoison.post(url, body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body, headers: response_headers}} ->
         cookies = extract_cookies(response_headers)
-        SessionStorage.set_session_info(identity, password, cookies)
+        SessionStorage.set_session_info(cookies)
         {:ok, response_body}
 
       {:ok, %HTTPoison.Response{status_code: code}} ->
@@ -90,12 +90,13 @@ defmodule SpaceTrackClient do
     login(identity, password, 3)
   end
 
-  def pull_satellite_data do
-    sat_data_url =
-      "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/41838,37951/predicates/FILE,EPOCH,TLE_LINE0,TLE_LINE1,TLE_LINE2/format/json"
-
+  def pull_satellite_data(satellites) do
+    satellite_list_string = Enum.join(satellites, ",")
     # sat_data_url =
-    #   "https://www.space-track.org/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/41838,37951/format/json"
+    #   "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/41838,37951/predicates/FILE,EPOCH,TLE_LINE0,TLE_LINE1,TLE_LINE2/format/json"
+
+    sat_data_url =
+      "https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/#{satellite_list_string}/format/json"
 
     if SessionStorage.expired() do
       refresh()
