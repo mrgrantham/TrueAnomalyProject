@@ -114,8 +114,6 @@ defmodule SpaceTrackClient do
 
     case HTTPoison.get(sat_data_url, cookie_header) do
       {:ok, %HTTPoison.Response{status_code: 200, body: response_body, headers: response_headers}} ->
-        # IO.puts("headers: #{inspect(response_headers)}")
-
         # retrieve the content type an ensure that we got json back from the server
         content_type =
           response_headers
