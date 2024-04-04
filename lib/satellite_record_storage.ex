@@ -1,27 +1,36 @@
 defmodule SatelliteRecordStorage do
-  use GenServer
+  @table_name __MODULE__
+  def init(satellites) do
+    IO.puts("Creating table #{inspect(__MODULE__)}")
 
-  def start_link(opts \\ []) do
-    GenServer.start(__MODULE__, opts, name: __MODULE__)
+    ets_options = [
+      :set,
+      :public,
+      :named_table,
+      {:read_concurrency, true},
+      {:write_concurrency, true}
+    ]
+
+    :ets.new(@table_name, ets_options)
+    :ets.insert(@table_name, {:satellites, satellites})
+    {:ok, %{}}
   end
 
-  def add_records(records) do
-    GenServer.call(__MODULE__, {:add_records, records})
+  def get_satellites() do
+    case :ets.lookup(@table_name, :satellites) do
+      [] -> {:error, :not_found}
+      [{:satellites, satellites}] -> {:ok, satellites}
+    end
   end
 
-  def get_records() do
-    GenServer.call(__MODULE__, :get_records)
+  def add_record(satellite, record) do
+    :ets.insert(@table_name, {satellite, record})
   end
 
-  def init(opts) do
-    {:ok, opts}
-  end
-
-  def handle_call({:add_records, records}, _from, _state) do
-    {:reply, :ok, records}
-  end
-
-  def handle_call(:get_records, _from, state) do
-    {:reply, state, state}
+  def get_record(satellite) do
+    case :ets.lookup(@table_name, satellite) do
+      [] -> {:error, :not_found}
+      [{_satellite, satellite_data}] -> {:ok, satellite_data}
+    end
   end
 end

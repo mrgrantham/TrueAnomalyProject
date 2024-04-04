@@ -46,10 +46,6 @@ defmodule SessionStorage do
     :ets.insert(@table_name, {:expiration, expiration})
   end
 
-  def set_satellite_query_info(satellites) do
-    :ets.insert(@table_name, {:satellites, satellites})
-  end
-
   def get_cookies() do
     case :ets.lookup(@table_name, :cookies) do
       [] -> {:error, :not_found}
@@ -68,13 +64,6 @@ defmodule SessionStorage do
     case :ets.lookup(@table_name, :expiration) do
       [] -> {:error, :not_found}
       [{:expiration, expiration}] -> {:ok, expiration}
-    end
-  end
-
-  def get_satellite_query_info() do
-    case :ets.lookup(@table_name, :satellites) do
-      [] -> {:error, :not_found}
-      [{:satellites, satellites}] -> {:ok, satellites}
     end
   end
 
