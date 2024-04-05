@@ -10,6 +10,8 @@ defmodule SpaceTrackRunnerTest do
   @satellites [41838, 37951]
 
   setup %{} do
+    # Avoid ETS table issue when starting up in isolation with
+    # `mix test --no-start test/space_track_runner_test.exs`
     {:ok, _} = Application.ensure_all_started(:hackney)
 
     on_exit(fn ->
