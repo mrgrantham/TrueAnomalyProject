@@ -23,11 +23,11 @@ There’s no need or expectation that the data persist if the application is shu
 
 ## Usage
 
-Replace @identity and @password strings with your own valid credentials in the following files 
+Replace `@identity` and `@password` strings with your own valid credentials in the following files 
 for application and tests to work as expected:
- - true_anomaly_project.ex
- - space_track_client_test.exs
- - space_track_runner_test.exs
+ - `true_anomaly_project.ex`
+ - `space_track_client_test.exs`
+ - `space_track_runner_test.exs`
 
 The app as a whole can be tested via `iex -S mix` and requesting data using `SatelliteRecordStorage.get_record(<NORAD_CAT_ID>)` or `SatelliteRecordStorage.get_records([<NORAD_CAT_ID1>,<NORAD_CAT_ID1>,...])`. The ID must be one that was already provided when starting up the SpaceTrackRunner GenServer.
 
