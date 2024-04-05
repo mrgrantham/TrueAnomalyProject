@@ -1,8 +1,8 @@
 defmodule SpaceTrackClientTest do
   use ExUnit.Case
 
-  @identity "james.grantham@gmail.com"
-  @password "xuTbaz-7nyxwe-dorfet"
+  @identity "<user-email>"
+  @password "<user-password>"
 
   setup do
     # Avoid ETS table issue when starting up in isolation with

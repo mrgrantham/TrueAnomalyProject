@@ -4,6 +4,7 @@
 A key element of mission planning and general space domain awareness (SDA) is knowing approximately
 where things are in space. Mosaic ingests and catalogs data from different commercial providers and
 from our own satellites as well.
+
 For this task, use Space Track to track two satellites, SJ-17 (NORAD ID 41838) and Luch 5A (NORAD ID
 37951). You’ll need to integrate with Spack Track’s API to query and store relevant information for the
 two satellites. Then, per Space Track’s API restrictions, set up a recurring job to pull down the latest TLE
@@ -26,7 +27,7 @@ The app as a whole can be tested via `iex -S mix` and requesting data using `Sat
 
 ## Testing
 
-Tests are run with `mix test --no-start` so they can be tested in isolation, avoiding the entire app starting up in the background.
+Tests are run with `mix test --no-start` so that they can be tested in isolation, avoiding the entire app starting up in the background.
 
 This also means that running `mix test` will fail as it stands, as it would casue some reasouces (like ETS tables) to attempt to be created twice, resulting in an error. Please avoid using it.
 

@@ -9,8 +9,8 @@ defmodule TrueAnomalyProject do
   """
 
   # credentials to use for pulling Space-Track data
-  @identity "james.grantham@gmail.com"
-  @password "xuTbaz-7nyxwe-dorfet"
+  @identity "<user-email>"
+  @password "<user-password>"
   # 10 second interval to pull new satellite data
   @pull_interval 10000
   # NORAD ID's for satellites to pull data on
