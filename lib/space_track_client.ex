@@ -94,7 +94,7 @@ defmodule SpaceTrackClient do
     login(identity, password, 3)
   end
 
-  def pull_satellite_data(satellites) do
+  def pull_satellite_data(satellites, retries \\ 3) do
     satellite_list_string = Enum.join(satellites, ",")
 
     satellite_data_url =
@@ -134,10 +134,24 @@ defmodule SpaceTrackClient do
         end
 
       {:ok, %HTTPoison.Response{status_code: code}} ->
-        {:error, "Failed with status code #{code}"}
+        case retries do
+          _ when retries >= 1 ->
+            IO.puts("Retrieval failed trying again. Retries left: #{retries}")
+            pull_satellite_data(satellites, retries - 1)
+
+          _ ->
+            {:error, "Failed with status code #{code}"}
+        end
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, reason}
+        case retries do
+          _ when retries >= 1 ->
+            IO.puts("Retrieval failed trying again. Retries left: #{retries}")
+            pull_satellite_data(satellites, retries - 1)
+
+          _ ->
+            {:error, reason}
+        end
     end
   end
 end
