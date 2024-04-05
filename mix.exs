@@ -26,7 +26,9 @@ defmodule TrueAnomalyProject.MixProject do
     [
       # handle rest api requests
       {:httpoison, "~> 2.2"},
+      # convert space track formatted date strings to date objects
       {:timex, "~> 3.7"},
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false},
       # handle json
       {:poison, "~> 5.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
